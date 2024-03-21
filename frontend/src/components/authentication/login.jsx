@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "./login.css"
 
 const Login = () => {
+    const navigate = useNavigate();
+
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -43,11 +46,16 @@ const Login = () => {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data.user)
-
-                    setUsername(data.user[1]);
-                    setFirstName(data.user[2]);
-                    setLastName(data.user[3]);
+                    if (data.error) {
+                        setResponse(data.error);
+                    } else {
+                        localStorage.setItem('userId', data.user[0]);
+                        localStorage.setItem('username', data.user[1]);
+                        localStorage.setItem('firstName', data.user[2]);
+                        localStorage.setItem('lastName', data.user[3]);
+                        localStorage.setItem('password', data.user[4]);
+                        navigate('/');
+                    }
                 })
                 .catch(error => {
                     setResponse(error)
@@ -86,8 +94,11 @@ const Login = () => {
             })
                 .then(response => response.json())
                 .then(data => {
-                    setResponse(data.error)
-                    console.log(data.error);
+                    if (data.error) {
+                        setResponse(data.error);
+                    } else {
+                        navigate('/login');
+                    }
                 })
                 .catch(error => {
                     setResponse(error)
