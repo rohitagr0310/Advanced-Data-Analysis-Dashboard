@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableBody from '@mui/material/TableBody';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,6 +18,35 @@ import {
     Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { styled } from '@mui/system';
+
+const MainContainer = styled(Box)({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+});
+
+const DashboardContainer = styled(Box)({
+    marginBottom: '20px',
+    textAlign: 'center',
+});
+
+const UploadContainer = styled(Box)({
+    marginBottom: '20px',
+});
+
+const ChartContainer = styled(Box)({
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+});
+
+const TableContainer = styled(Box)({
+    width: '48%',
+    height: '500px',
+    overflow: 'scroll',
+});
 
 const Home = (props) => {
     const { loggedIn, setLoggedIn } = props;
@@ -68,7 +104,6 @@ const Home = (props) => {
                 const datasets = [];
                 for (let i = 1; i < rowsWithCell.length; i++) {
                     const data = rowsWithCell[i].slice(1).filter((item) => !Number.isNaN(parseFloat(item)))
-                    console.log(data)// Assuming data starts from the second column
                     datasets.push({
                         label: `Dataset${i}`, // Assuming first column is label for each dataset
                         data: data,
@@ -76,10 +111,6 @@ const Home = (props) => {
                         borderColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.6)`,
                     });
                 }
-                console.log({
-                    labels: labels,
-                    datasets: datasets,
-                })
                 setChartData({
                     labels: labels,
                     datasets: datasets,
@@ -97,21 +128,22 @@ const Home = (props) => {
             },
             title: {
                 display: true,
-                text: 'Chart.js Line Chart',
+                text: 'Line Chart',
             },
         },
     };
 
     return (
-        <Box className="mainContainer" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-            <Box sx={{ marginBottom: '20px', textAlign: 'center' }}>
-                <div>Welcome!</div>
-            </Box>
+        <MainContainer>
+            <DashboardContainer>
+                <Typography variant="h5">Welcome!</Typography>
+            </DashboardContainer>
             {loggedIn ? (
                 <Box>
-                    <Box sx={{ marginBottom: '20px' }}>This is your dashboard.</Box>
-                    <Box sx={{ marginBottom: '20px' }}>
-                        <div>Upload CSV File</div>
+                    <DashboardContainer>This is your dashboard.</DashboardContainer>
+                    <Button variant="contained" onClick={onLogout}>Logout</Button>
+                    <UploadContainer>
+                        <Typography variant="h6">Upload CSV File</Typography>
                         <form>
                             <input
                                 type={"file"}
@@ -119,46 +151,41 @@ const Home = (props) => {
                                 accept={".csv"}
                                 onChange={handleOnChange}
                             />
-
-                            <button
-                                onClick={(e) => {
-                                    handleOnSubmit(e);
-                                }}
-                            >
-                                IMPORT CSV
-                            </button>
+                            <Button variant="contained" onClick={handleOnSubmit}>IMPORT CSV</Button>
                         </form>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                        <Box sx={{ width: '48%', height: '500px', overflow: 'scroll' }}>
-                            <table>
-                                <thead>
-                                    <tr>
+                    </UploadContainer>
+                    <ChartContainer>
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
                                         {cells && Array.isArray(cells) && cells[0]?.map((item) => (
-                                            <th key={item}>{item}</th>
+                                            <TableCell key={item}>{item}</TableCell>
                                         ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
                                     {cells && Array.isArray(cells) && cells.map((row, index) => (
-                                        <tr key={row[0] + index}>
+                                        <TableRow key={row[0] + index}>
                                             {row && row.map((item) => (
-                                                <td key={item}>{item}</td>
+                                                <TableCell key={item}>{item}</TableCell>
                                             ))}
-                                        </tr>
+                                        </TableRow>
                                     ))}
-                                </tbody>
-                            </table>
-                        </Box>
-                        {chartData?.labels && <Box sx={{ width: '48%' }}>
-                            <Line options={options} data={chartData} />
-                        </Box>}
-                    </Box>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        {chartData?.labels && (
+                            <Box width="48%" height="800px">
+                                <Line options={options} data={chartData} />
+                            </Box>
+                        )}
+                    </ChartContainer>
                 </Box>
             ) : (
                 <Box>Please log in to access this page.</Box>
             )}
-        </Box>
+        </MainContainer>
     );
 }
 
