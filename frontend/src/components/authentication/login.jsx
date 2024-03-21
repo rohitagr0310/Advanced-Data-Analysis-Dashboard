@@ -54,6 +54,7 @@ const Login = () => {
                         localStorage.setItem('firstName', data.user[2]);
                         localStorage.setItem('lastName', data.user[3]);
                         localStorage.setItem('password', data.user[4]);
+
                         navigate('/');
                     }
                 })
