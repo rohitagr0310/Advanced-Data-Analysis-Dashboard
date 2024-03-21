@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
 
-const Home = (props) => {
+const HomeTest = (props) => {
     const { loggedIn, setLoggedIn } = props;
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [username, setUsername] = useState('');
+    const [file, setFile] = useState();
+    const [cells, setCells] = useState();
 
     useEffect(() => {
         // Check if user is logged in from local storage
@@ -18,47 +21,83 @@ const Home = (props) => {
     }, [loggedIn, setLoggedIn]);
 
     const onLogout = () => {
-        // Perform logout logic
-        localStorage.removeItem('Storage');
+        localStorage.clear();
         setLoggedIn(false);
     };
 
+    const fileReader = new FileReader();
+
+    const handleOnChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const handleOnSubmit = (e) => {
+        e.preventDefault();
+
+        if (file) {
+            fileReader.onload = function (event) {
+                const text = event.target.result;
+                const rows = text.toString().split('\n')
+                const rowsWithCell = rows.map((row) => row.split(','))
+                setCells(rowsWithCell)
+            };
+            fileReader.readAsText(file);
+        }
+    };
+
     return (
-        <div className="mainContainer">
-            <div className={'titleContainer'}>
+        <Box className="mainContainer" sx={{ padding: '20px' }}>
+            <Box sx={{ marginBottom: '20px', textAlign: 'center' }}>
                 <div>Welcome!</div>
-            </div>
+            </Box>
             {loggedIn ? (
-                <div>
-                    <div>This is your dashboard.</div>
-                    <div className={'dashboardContainer'}>
-                        <div className={'dashboardItem'}>
-                            <h2>Profile</h2>
-                            <p>Username: {username}</p>
-                            <p>First Name: {firstName}</p>
-                            <p>Last Name: {lastName}</p>
-                        </div>
-                        <div className={'dashboardItem'}>
-                            <h2>Settings</h2>
-                            <p>Update your preferences here.</p>
-                        </div>
-                        <div className={'dashboardItem'}>
-                            <h2>Activity</h2>
-                            <p>View recent activity.</p>
-                        </div>
-                        <div className={'dashboardItem'}>
-                            <h2>Logout</h2>
-                            <button className={'logoutButton'} onClick={onLogout}>
-                                Logout
+                <Box>
+                    <Box sx={{ marginBottom: '20px' }}>This is your dashboard.</Box>
+                    <Box sx={{ marginBottom: '20px' }}>
+                        <div>Upload CSV File</div>
+                        <form>
+                            <input
+                                type={"file"}
+                                id={"csvFileInput"}
+                                accept={".csv"}
+                                onChange={handleOnChange}
+                            />
+
+                            <button
+                                onClick={(e) => {
+                                    handleOnSubmit(e);
+                                }}
+                            >
+                                IMPORT CSV
                             </button>
-                        </div>
-                    </div>
-                </div>
+                        </form>
+                    </Box>
+                    <Box>
+                        <table>
+                            <thead>
+                                <tr>
+                                    {cells && Array.isArray(cells) && cells[0]?.map((item) => (
+                                        <th key={item}>{item}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cells && Array.isArray(cells) && cells.map((row, index) => (
+                                    <tr key={row[0] + index}>
+                                        {row && row.map((item) => (
+                                            <td key={item}>{item}</td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </Box>
+                </Box>
             ) : (
-                <div>Please log in to access this page.</div>
+                <Box>Please log in to access this page.</Box>
             )}
-        </div>
+        </Box>
     );
 }
 
-export default Home;
+export default HomeTest;
