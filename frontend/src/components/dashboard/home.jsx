@@ -50,9 +50,6 @@ const TableContainer = styled(Box)({
 
 const Home = (props) => {
     const { loggedIn, setLoggedIn } = props;
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [userName, setUserName] = useState('');
     const [file, setFile] = useState();
     const [cells, setCells] = useState();
     const [chartData, setChartData] = useState({});
@@ -68,14 +65,7 @@ const Home = (props) => {
     );
 
     useEffect(() => {
-        // Check if user is logged in from local storage
-        const storedData = localStorage.getItem('Storage');
-        if (storedData) {
-            const userData = JSON.parse(storedData);
-            setFirstName(userData.firstName);
-            setLastName(userData.lastName);
-            setUserName(userData.username);
-        }
+
     }, [loggedIn, setLoggedIn]);
 
     const onLogout = () => {
