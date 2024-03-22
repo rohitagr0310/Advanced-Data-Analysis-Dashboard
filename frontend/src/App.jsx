@@ -5,7 +5,7 @@ import Login from './components/authentication/login';
 import './App.css';
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(localStorage.getItem('status'));
   const [username, setUsername] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -13,7 +13,7 @@ function App() {
 
   // Function to check if the user is logged in
   const isAuthenticated = () => {
-    return loggedIn;
+    return localStorage.getItem('status');
   };
 
   return (

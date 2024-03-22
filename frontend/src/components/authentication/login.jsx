@@ -47,6 +47,7 @@ const Login = () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
+                        console.log("if")
                         setResponse(data.error);
                     } else {
                         localStorage.setItem('userId', data.user[0]);
@@ -54,7 +55,7 @@ const Login = () => {
                         localStorage.setItem('firstName', data.user[2]);
                         localStorage.setItem('lastName', data.user[3]);
                         localStorage.setItem('password', data.user[4]);
-
+                        localStorage.setItem('status', true);
                         navigate('/');
                     }
                 })

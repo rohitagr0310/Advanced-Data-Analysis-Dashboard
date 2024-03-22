@@ -19,6 +19,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { styled } from '@mui/system';
+import { Navigate } from 'react-router-dom';
 
 const MainContainer = styled(Box)({
     display: 'flex',
@@ -69,8 +70,15 @@ const Home = (props) => {
     }, [loggedIn, setLoggedIn]);
 
     const onLogout = () => {
-        localStorage.clear();
+        if (localStorage.getItem('status')) {
+
+            localStorage.setItem('status', false);
+        }
         setLoggedIn(false);
+    };
+
+    const onLogin = () => {
+        <Navigate to={'/login'} />
     };
 
     const fileReader = new FileReader();
@@ -89,13 +97,12 @@ const Home = (props) => {
                 const rowsWithCell = rows.map((row) => row.split(','))
                 setCells(rowsWithCell);
 
-                // Process data for chart
                 const labels = rowsWithCell[0].slice(1); // Assuming first row is labels and first column is not x-axis
                 const datasets = [];
                 for (let i = 1; i < rowsWithCell.length; i++) {
                     const data = rowsWithCell[i].slice(1).filter((item) => !Number.isNaN(parseFloat(item)))
                     datasets.push({
-                        label: `Dataset${i}`, // Assuming first column is label for each dataset
+                        label: `Dataset${i}`,
                         data: data,
                         fill: false,
                         borderColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.6)`,
@@ -173,7 +180,10 @@ const Home = (props) => {
                     </ChartContainer>
                 </Box>
             ) : (
-                <Box>Please log in to access this page.</Box>
+                <>
+                    <Box>Please log in to access this page.</Box>
+                    <Button variant="contained" onClick={onLogin}>Login</Button>
+                </>
             )}
         </MainContainer>
     );
