@@ -52,7 +52,7 @@ const Home = (props) => {
     const { loggedIn, setLoggedIn } = props;
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [username, setUsername] = useState('');
+    const [userName, setUserName] = useState('');
     const [file, setFile] = useState();
     const [cells, setCells] = useState();
     const [chartData, setChartData] = useState({});
@@ -74,7 +74,7 @@ const Home = (props) => {
             const userData = JSON.parse(storedData);
             setFirstName(userData.firstName);
             setLastName(userData.lastName);
-            setUsername(userData.username);
+            setUserName(userData.username);
         }
     }, [loggedIn, setLoggedIn]);
 
